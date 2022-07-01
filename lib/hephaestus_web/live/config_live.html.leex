@@ -1,0 +1,19 @@
+<h3> Hello, config wizard </h3>
+
+<form id="upload-form" phx-submit="upload" phx-change="validate">
+  <%= live_file_input @uploads.config_file %>
+  <button type="submit">Upload</button>
+</form>
+
+<h4>Config</h4>
+<%= for c <- @config do %>
+  <ul>
+  <%= for i <- Map.keys(c) do %>
+    <li> <%= i %>: <%= c[i] %> </li>
+  <% end %>
+  </ul>
+<% end %>
+
+<%= for c <- @config_meta do %>
+  <button phx-click="add_section" phx-value-type=<%= c.type %>><%= c.type %></button>
+<% end %>

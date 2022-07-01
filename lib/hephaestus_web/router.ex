@@ -18,6 +18,7 @@ defmodule HephaestusWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    live "/config", ConfigLive
   end
 
   # Other scopes may use custom stacks.
