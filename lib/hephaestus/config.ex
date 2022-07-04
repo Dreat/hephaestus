@@ -15,22 +15,39 @@ defmodule Hephaestus.Config do
 
   def get_metadata(_), do: {:error, :wrong_input}
 
-  def add_section(config_meta, type) do
+  def create_config(config),
+    do:
+      config
+      |> Enum.map(fn x -> Map.put(x, :id, Ecto.UUID.generate()) end)
+      |> Enum.sort(fn %{id: id1}, %{id: id2} -> id1 > id2 end)
+
+  def add_section(config, config_meta, type) do
     %{type: _, fields: fields} = Enum.find(config_meta, fn %{type: t, fields: _} -> t == type end)
 
-    fields
-    |> Map.new(fn x -> {x, nil} end)
-    |> Map.put(:id, Ecto.UUID.generate())
-    |> Map.put(:type, type)
+    c =
+      fields
+      |> Map.new(fn x -> {x, nil} end)
+      |> Map.put(:id, Ecto.UUID.generate())
+      |> Map.put(:type, type)
+
+    (config ++ [c])
+    |> Enum.sort(fn %{id: id1}, %{id: id2} -> id1 > id2 end)
   end
 
-  def update_config(config, []), do: config
+  def update_config(config, id, params) do
+    params = Map.new(params, fn {k, v} -> {String.to_existing_atom(k), v} end)
+    c = Enum.find(config, fn %{id: i} -> i == id end)
+    c1 = Map.merge(c, params)
 
-  def update_config(config, [line | rest]) do
-    [l1, l2] = String.split(line, ":")
-    a = String.to_existing_atom(l1)
-    l2 = String.trim(l2)
-    config = Map.put(config, a, l2)
-    update_config(config, rest)
+    config
+    |> Enum.reject(fn x -> x.id == id end)
+    |> Enum.concat([c1])
+    |> Enum.sort(fn %{id: id1}, %{id: id2} -> id1 > id2 end)
+  end
+
+  def delete_section(config, id) do
+    config
+    |> Enum.reject(fn x -> x.id == id end)
+    |> Enum.sort(fn %{id: id1}, %{id: id2} -> id1 > id2 end)
   end
 end
