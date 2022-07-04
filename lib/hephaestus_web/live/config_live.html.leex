@@ -1,19 +1,37 @@
 <h3> Hello, config wizard </h3>
+<%= if @config != [] do %>
+  <%= f = form_for :download, Routes.download_path(@socket, :download), phx_change: "construct_json" %>
+  <%= label f, :filename %>
+  <%= text_input f, :filename %>
+  <%= hidden_input f, :config, value: @config_json %>
+  <%= submit "download" %>
+  </form>
+<% end %>
 
-<form id="upload-form" phx-submit="upload" phx-change="validate">
+<form id="upload-form" phx-submit="upload" phx-change="mock_validate">
   <%= live_file_input @uploads.config_file %>
   <button type="submit">Upload</button>
 </form>
 
 <h4>Config</h4>
 <%= for c <- @config do %>
-  <ul>
-  <%= for i <- Map.keys(c) do %>
-    <li> <%= i %>: <%= c[i] %> </li>
-  <% end %>
-  </ul>
+<%= f = form_for :config_form, "#", id: c.id, phx_change: "edit_config" %>
+    <%= for i <- Map.keys(c) do %>
+      <%= if i != :id and i != :type do %>
+        <%= label f, i %>
+        <%= text_input f, i, value: c[i] %>
+        <%= hidden_input f, :config_id, value: c.id %>
+      <% end %>
+    <% end %>
+    <br />
+<button phx-click="delete" phx-value-id=<%= c.id %>>Delete</button>
+    <br />
+  </form>
 <% end %>
 
+
+<br />
 <%= for c <- @config_meta do %>
-  <button phx-click="add_section" phx-value-type=<%= c.type %>><%= c.type %></button>
+  <button phx-click="add_section" phx-value-type=<%= c.type %>>Add <%= c.type %> section</button>
+  <br />
 <% end %>

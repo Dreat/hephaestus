@@ -19,6 +19,7 @@ defmodule HephaestusWeb.Router do
 
     get "/", PageController, :index
     live "/config", ConfigLive
+    post "/download", DownloadController, :download
   end
 
   # Other scopes may use custom stacks.

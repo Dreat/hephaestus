@@ -53,10 +53,10 @@ defmodule Hephaestus.ConfigTest do
       assert [
                %{
                  type: "range",
-                 fields: [:display, :max, :min, :name, :section, :type, :value_type]
+                 fields: [:display, :max, :min, :name, :section, :value_type]
                },
-               %{type: "select", fields: [:display, :name, :section, :type, :values]},
-               %{type: "checkbox", fields: [:display, :name, :section, :type]}
+               %{type: "select", fields: [:display, :name, :section, :values]},
+               %{type: "checkbox", fields: [:display, :name, :section]}
              ] = result
     end
   end
